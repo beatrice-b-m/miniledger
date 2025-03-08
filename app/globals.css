@@ -1,26 +1,63 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+	--background: #e4e2df;
+	--foreground: #2c2c2c;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--font-sans: var(--font-geist-sans);
+	--font-mono: var(--font-geist-mono);
+
+	--color-fg: #f9f7f7;
+	--color-mg: #f1eee9;
+	--color-bg: #e4e2df;
+
+	--color-gray_l: #9a9a9a;
+	--color-gray_m: #757475;
+	--color-gray_d: #4a4a4a;
+	--color-gray_xd: #2c2c2c;
+
+	--color-accent_xl: #ffa1ad;
+	--color-accent_l: #ff637e;
+	--color-accent_m: #ff2056;
+	--color-accent_d: #c70036;
+
+	--color-shadow-l: rgb(0 0 0 / 0.1);
+	--color-shadow-m: rgb(0 0 0 / 0.3);
+	--color-shadow-d: rgb(0 0 0 / 0.5);
+
+	--shadow-out_2px: 2px 2px var(--color-shadow-m);
+	--shadow-out_2px_dark: 2px 2px var(--color-shadow-d);
+	--shadow-in_2px: 2px 2px var(--color-shadow-m) inset;
+	--shadow-in_2px_dark: 2px 2px var(--color-shadow-d) inset;
+	--shadow-down: 0px 1px var(--color-shadow-m);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+/* @media (prefers-color-scheme: dark) {
+	:root {
+		--background: #0a0a0a;
+		--foreground: #ededed;
+	}
+} */
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+	background: var(--background);
+	color: var(--foreground);
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+.flat-button {
+	background-color: var(--color-mg);
+	border: 1px solid var(--color-gray_l);
+}
+.flat-button:hover {
+	background-color: var(--color-fg);
+	border: 1px solid var(--color-accent_l);
+}
+.flat-button:active {
+	box-shadow: 2px 2px var(--color-shadow-d) inset;
+	border: 1px solid var(--color-accent_m);
 }
