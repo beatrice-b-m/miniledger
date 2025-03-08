@@ -5,7 +5,7 @@ function NavItem({ name, link }: { name: string; link: string }) {
 	return (
 		<Link
 			href={link}
-			className="flat-button h-8 w-38 border-[1px] text-center text-lg leading-8"
+			className="flat-button h-8 w-38 text-center text-lg leading-8"
 		>
 			{name}
 		</Link>
@@ -20,7 +20,7 @@ export default function NavFrame({ user }: { user: User | null }) {
 			<NavItem name={"Orders"} link={"/orders"} />
 			<NavItem name={"Transactions"} link={"/transactions"} />
 			{user !== null ? (
-				<NavItem name={"Logout"} link={"/user/logout"} />
+				<NavItem name={"Profile"} link={"/user/profile"} />
 			) : null}
 		</div>
 	);
