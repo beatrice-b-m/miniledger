@@ -1,6 +1,7 @@
 "use server";
 
 import { prisma } from "@/prisma/client";
+import { redirect } from "next/navigation";
 
 function getBigCartelAuth(): string {
 	const subdomain: string | undefined = process.env.BIGCARTEL_SUBDOMAIN;
@@ -78,7 +79,6 @@ export async function linkBigCartelAccountId(userId: number) {
 		}
 
 		const data: AccountInfo = await response.json();
-		console.log("Account Info:", data);
 
 		await updateBigCartelId(userId, data.data[0].id);
 	} catch (error) {
