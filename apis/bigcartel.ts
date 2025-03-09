@@ -1,14 +1,17 @@
-function getBigCartelAuth() {
-	const accountSubdomain: string | undefined =
-		process.env.BIGCARTEL_SUBDOMAIN;
-	const accountPassword: string | undefined = process.env.BIGCARTEL_PASSWORD;
+"use server";
 
-	if (!accountSubdomain) {
+import { prisma } from "@/prisma/client";
+
+function getBigCartelAuth(): string {
+	const subdomain: string | undefined = process.env.BIGCARTEL_SUBDOMAIN;
+	if (!subdomain) {
 		throw new Error(
 			"'BIGCARTEL_SUBDOMAIN' environment variable not defined!",
 		);
 	}
-	if (!accountPassword) {
+
+	const password: string | undefined = process.env.BIGCARTEL_PASSWORD;
+	if (!password) {
 		throw new Error(
 			"'BIGCARTEL_PASSWORD' environment variable not defined!",
 		);
@@ -16,19 +19,69 @@ function getBigCartelAuth() {
 
 	// get the auth header contents
 	const authHeader: string =
-		"Basic " +
-		Buffer.from(`${accountSubdomain}:${accountPassword}`).toString(
-			"base64",
-		);
+		"Basic " + Buffer.from(`${subdomain}:${password}`).toString("base64");
 	return authHeader;
 }
 
-function linkBigCartelAccount() {
+interface AccountInfo {
+	data: [
+		{
+			id: string;
+			type: string;
+			attributes: Object;
+			links: Object;
+			relationships: Object;
+			meta: {};
+		},
+	];
+	meta: { count: string };
+	included: [{ id: string; type: string; attributes: Object }];
+	links: {};
+}
+
+async function updateBigCartelId(
+	userId: number,
+	bigCartelId: string,
+): Promise<void> {
+	await prisma.user.update({
+		where: { id: userId },
+		data: {
+			bigCartelId: bigCartelId,
+		},
+	});
+}
+
+export async function linkBigCartelAccountId(userId: number) {
 	const accountURL: string = "https://api.bigcartel.com/v1/accounts";
 
-	const params = {
-		Accept: "application/vnd.api+json",
-		"User-Agent":
-			"MiniLedger Pre-Release Testing/0.1 (bbrownmulry@gmail.com)",
-	};
+	try {
+		const authHeader: string = getBigCartelAuth();
+
+		const userAgent: string | undefined = process.env.USER_AGENT;
+		if (!userAgent) {
+			throw new Error("'userAgent' environment variable not defined!");
+		}
+
+		const headers: Headers = new Headers({
+			Accept: "application/vnd.api+json",
+			"User-Agent": userAgent,
+			Authorization: authHeader,
+		});
+
+		const response = await fetch(accountURL, {
+			method: "GET",
+			headers: headers,
+		});
+
+		if (!response.ok) {
+			throw new Error(`HTTP error! Status: ${response.status}`);
+		}
+
+		const data: AccountInfo = await response.json();
+		console.log("Account Info:", data);
+
+		await updateBigCartelId(userId, data.data[0].id);
+	} catch (error) {
+		console.error("Failed to fetch account info:", error);
+	}
 }
