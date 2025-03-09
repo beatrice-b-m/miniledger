@@ -1,7 +1,73 @@
 "use server";
 
 import { prisma } from "@/prisma/client";
-import { redirect } from "next/navigation";
+import { Product } from "@prisma/client";
+
+interface ProductListing {
+	id: number;
+	name: string;
+	permalink: string;
+	position: number;
+	price: number;
+	default_price: number;
+	tax: number;
+	url: string;
+	status: string;
+	on_sale: boolean;
+	created_at: string;
+	description: string;
+	has_option_groups: boolean;
+	options: Object[];
+	shipping: Object[];
+	images: Object[];
+	artists: [];
+	categories: Object[];
+	option_groups: [];
+}
+
+export async function listProducts(): Promise<Product[]> {
+	return await prisma.product.findMany();
+}
+
+export async function updateProducts() {
+	const url: string = "https://ashidaii.bigcartel.com/products.json";
+
+	const response = await fetch(url, {
+		method: "GET",
+		headers: {
+			"Content-Type": "application/json",
+		},
+	});
+
+	if (response.ok) {
+		const products: ProductListing[] | null = await response.json();
+		if (products !== null) {
+			products.map(
+				async (productListing: ProductListing) =>
+					await prisma.product.upsert({
+						where: {
+							id: productListing.id,
+						},
+						update: {
+							id: productListing.id,
+							name: productListing.name,
+							permalink: productListing.permalink,
+						},
+						create: {
+							id: productListing.id,
+							name: productListing.name,
+							permalink: productListing.permalink,
+						},
+					}),
+			);
+		}
+		console.log("Product database updated");
+	} else {
+		throw new Error(
+			`bad http response [status: ${response.status} ${response.text}]!`,
+		);
+	}
+}
 
 function getBigCartelAuth(): string {
 	const subdomain: string | undefined = process.env.BIGCARTEL_SUBDOMAIN;

@@ -19,6 +19,34 @@ model User {
     sessions    Session[]
 }
 
+// interface ProductListing {
+// 	id: number;
+// 	name: string;
+// 	permalink: string;
+// 	position: number;
+// 	price: number;
+// 	default_price: number;
+// 	tax: number;
+// 	url: string;
+// 	status: string;
+// 	on_sale: boolean;
+// 	created_at: string;
+// 	description: string;
+// 	has_option_groups: boolean;
+// 	options: Object[];
+// 	shipping: Object[];
+// 	images: Object[];
+// 	artists: [];
+// 	categories: Object[];
+// 	option_groups: [];
+// }
+
+model Product {
+    id        Int    @id
+    name      String
+    permalink String
+}
+
 model Session {
     id        String   @id
     userId    Int
